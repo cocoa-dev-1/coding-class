@@ -1,19 +1,14 @@
-inputInt = int(input())
-b = 0
+inStr = input()
+print(inStr)
 
-def getIntLen(n):
-    n = str(n)
-    return len(n)
+for i in inStr:
+    if i == ' ':#
+        print(' ',end='')
+        continue
+    asc = ord(i)
+    if i in ['a', 'b', 'c', 'A', 'B', 'C']:
+        asc_convert = asc + 23
+    else:
+        asc_convert = asc - 3
 
-while True:
-    a = getIntLen(inputInt)
-    if a == 1:
-        break
-
-    for i in range(1,a+1):
-        if i == 1:
-            b += inputInt % 10
-            inputInt = inputInt // 10
-
-
-print(inputInt)
+    print(chr(asc_convert),end='',sep='')

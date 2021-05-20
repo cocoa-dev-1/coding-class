@@ -1,12 +1,24 @@
-s = input()
-a_list = []
-b = ''
-
-for i in range(len(s)):
-    if b == s[i]:
-        a_list.append(a_list[i-1]+1)
+while True:
+    t = input()
+    if t != 'exit':
+        print(t)
     else:
-        a_list.append(1)
-    b = s[i]
+        break
 
-print(max(a_list))
+
+math_score = [80, 79, 65, 100, 32]
+a = 0
+
+for i in math_score:
+    a += i
+
+print(a)
+print(a/len(math_score))
+
+b = 0
+
+for i in math_score:
+    if i > a/len(math_score) :
+        b += 1
+
+print(b)
