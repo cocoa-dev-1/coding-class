@@ -47,13 +47,12 @@ for i in range(t):
   third_result += 1 if third[i] == answer[third_count] else 0
   third_count += 1
 main_list.append(third_result)
-main_result = 0
+
 for i in main_list:
     print(i)
     if i == max(main_list):
         print(i)
-        result_list.append(main_result+1)
-        main_result += 1
+        result_list.append(main_list.index(i)+1)
 print(main_list)
 result_list.sort()
 print(result_list)
