@@ -13,6 +13,11 @@ for i in range(len(answer)//len(first)):
     for a in first:
         first_result += 1 if a == answer[first_count] else 0
         first_count += 1
+f = len(answer)%len(first)
+print(f)
+for i in range(f):
+  first_result += 1 if first[i] == answer[first_count] else 0
+  first_count += 1
 main_list.append(first_result)
 
 
@@ -22,6 +27,11 @@ for i in range(len(answer)//len(secound)):
     for a in secound:
         secound_result += 1 if a == answer[secound_count] else 0
         secound_count += 1
+s = len(answer)%len(secound)
+print(s)
+for i in range(s):
+  secound_result += 1 if secound[i] == answer[secound_count] else 0
+  secound_count += 1
 main_list.append(secound_result)
     
 third_result = 0
@@ -31,7 +41,11 @@ for i in range(len(answer)//len(third)):
     for a in third:
         third_result += 1 if a == answer[third_count] else 0
         third_count += 1
-
+t = len(answer)%len(third)
+print(t)
+for i in range(t):
+  third_result += 1 if third[i] == answer[third_count] else 0
+  third_count += 1
 main_list.append(third_result)
 
 for i in main_list:
