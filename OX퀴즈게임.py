@@ -1,4 +1,6 @@
+import operator
 import random
+import time
 
 category_selected = False
 category_selected_name = ''
@@ -42,25 +44,65 @@ category_dic = {
     ]
 }
 user_input = False
-user = {}
+current_user = ''
+old_user_info = {}
+
+
+def get_files(file_name):
+    f = open('{0}.txt'.format(file_name), 'r')
+    user_dic = {}
+    user_list = list(f.read().split('\n'))
+    for v in user_list:
+        if not v:
+            continue
+        user_dic[v.split()[0]] = int(v.split()[1])
+    return user_dic
+
+def write_files(file_name, text):
+    f = open('{0}.txt'.format(file_name), 'a')
+    f.write(text)
+
+
+def category_etc(selected):
+    global category_selected
+    global old_user_info
+    category_selected = True
+    if selected == len(category_dic)+1:
+        user_rank = sorted(old_user_info.items(), key = operator.itemgetter(1), reverse = True)
+        for i, v in enumerate(user_rank):
+            print('{0}등 {1}님 점수: {2}'.format(i+1, v[0], v[1]))
+        category_selected = False
+    else:
+        print('게임이 종료되었습니다. ')
 
 def show_answer_f(show_answer):
+    global user_input
     global category_selected
     global category_selected_name
     global category_answer
+    global old_user_info
+    f = open('quiz_rank.txt', 'w')
+    for k, v in old_user_info.items():
+        f.write('{0} {1}\n'.format(k, v))
+        print(k, v)
     if show_answer == 'y':
         for k, v in enumerate(category_answer):
             if v == 'X':
                 print('{0}번 정답: {1} 해설: {2}'.format(k+1, category_dic[category_selected_name][k][1],category_dic[category_selected_name][k][2]))
     category_answer = []
     print('게임을 끝내시겠습니까? (y,n)')
-    if input().lower() == 'y':
+    inp = input().lower()
+    if inp == 'y':
         category_selected = False
+    elif inp == 'n':
+        user_input = False
+    init()
         
 
 def selected_category(selected):
     global category_selected
     global category_selected_name
+    correct_aswer = 0
     for k, v in enumerate(category_dic):
         if k == selected:
             print('selected')
@@ -74,27 +116,53 @@ def selected_category(selected):
                 user_answer = input().upper()
                 if user_answer == answer:
                     category_answer.append('O')
+                    correct_aswer += 1
                 else:
                     category_answer.append('X')
+    if correct_aswer > old_user_info[current_user]:
+        old_user_info[current_user] = correct_aswer
+    print('맞춘 갯수: {0}/10'.format(correct_aswer))
     print('틀린 문제의 해설을 보시겠습니까? (y,n)')
     show_answer = input().lower()
     show_answer_f(show_answer)
 
 if __name__ == '__main__':
-    while user_input == False:
-        print('유저 정보를 입력해 주세요.')
-        user_name = input('유저 아이디: ')
-        if user_name in user:
-            print('해당 닉네임은 사용하실 수 없습니다.')
-        else:
-            user[user_name] = 0
-            user_input = True
+    def init():
+        global user_input
+        global current_user
+        global category_selected
+        global category_dic
+        global old_user_info
 
-while category_selected == False:
-    print('카테고리를 선택하세요.')
-    for k, v in enumerate(category_dic):
-        print('{0}. {1}'.format(k+1, v))
-    category_input = int(input())
-    selected_category(category_input-1)
+        while user_input == False:
+            print('유저 정보를 입력해 주세요.')
+            user_name = input('유저 아이디: ')
+            old_user_info = get_files('quiz_rank')
+            print(old_user_info)
+            current_user = user_name
+            if user_name in old_user_info:
+                print('{0}님 안녕하세요. 게임에 접속하신 것을 환영합니다.'.format(user_name))
+                user_input = True
+                category_selected = False
+            else:
+                print('신규유저 {0}님 안녕하세요. 게임에 접속하신 것을 환영합니다.'.format(user_name))
+                write_files('quiz_rank', '\n{0} 0'.format(user_name))
+                old_user_info[user_name] = 0
+                user_input = True
+                category_selected = False
+
+        while category_selected == False:
+            print('카테고리를 선택하세요.')
+            for k, v in enumerate(category_dic):
+                print('{0}. {1}'.format(k+1, v))
+            print('{0}. {1}'.format(len(category_dic)+1, '순위보기'))
+            print('{0}. {1}'.format(len(category_dic)+2, '종료하기'))
+            category_input = int(input())
+            if category_input in [len(category_dic)+1,len(category_dic)+2]:
+                category_etc(category_input)
+            else:
+                selected_category(category_input-1)
+    
+    init()
 
     

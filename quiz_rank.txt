@@ -1,0 +1,5 @@
+Sin 10
+cocoa 5
+X 0
+Ds 0
+sad 5
