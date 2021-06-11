@@ -56,11 +56,13 @@ def get_files(file_name):
         if not v:
             continue
         user_dic[v.split()[0]] = int(v.split()[1])
+    f.close()
     return user_dic
 
 def write_files(file_name, text):
     f = open('{0}.txt'.format(file_name), 'a')
     f.write(text)
+    f.close()
 
 
 def category_etc(selected):
@@ -85,17 +87,18 @@ def show_answer_f(show_answer):
     for k, v in old_user_info.items():
         f.write('{0} {1}\n'.format(k, v))
         print(k, v)
+    f.close()
     if show_answer == 'y':
         for k, v in enumerate(category_answer):
             if v == 'X':
                 print('{0}번 정답: {1} 해설: {2}'.format(k+1, category_dic[category_selected_name][k][1],category_dic[category_selected_name][k][2]))
     category_answer = []
-    print('게임을 끝내시겠습니까? (y,n)')
+    print('게임을 재시작 하시겠습니까? (y,n)')
     inp = input().lower()
     if inp == 'y':
-        category_selected = False
-    elif inp == 'n':
         user_input = False
+    elif inp == 'n':
+        category_selected = False
     init()
         
 
