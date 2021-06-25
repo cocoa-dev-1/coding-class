@@ -1,3 +1,6 @@
+from os import cpu_count
+
+
 n = int(input())
 n_list = list(input().split())
 
@@ -18,6 +21,19 @@ def get_coords(coord_list):
             pass
     return x+1, y+1
 
-a, b = get_coords(n_list)
+def get_coords_2(coord_list):
+    global n
+    x, y = 1, 1
+    count = 0
+    for i in coord_list:
+        nx = x + main_dict[i][0]
+        ny = y + main_dict[i][1]
+        if nx > 0 and ny > 0 and nx <= n and ny <= n:
+            x = nx
+            y = ny
+    return x, y
+
+
+a, b = get_coords_2(n_list)
 print(a, b)
         
