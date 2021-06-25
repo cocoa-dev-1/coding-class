@@ -1,5 +1,3 @@
-from abc import abstractproperty
-
 
 main_str = input()
 n = int(input())
