@@ -50,8 +50,3 @@ for _ in range(query):
         main_dic[k] = v
 
 print(change_list)
-            
-        
-            
-    
-    
