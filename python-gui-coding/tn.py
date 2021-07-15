@@ -22,6 +22,12 @@ from playsound import playsound
 ##1. 위치 잡기 5x5 -> 그리드 방식
 ##2. 이미지 입히기
 ##3. 동작 연결하기
+HOST = '127.0.0.1'
+PORT = 30120
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+client_socket.connect((HOST,PORT))
 
 coords = {}
 current_path = os.getcwd()
@@ -29,15 +35,18 @@ button = {}
 button_click = {}
 timer = 1000
 score = 0
-start_array_size = 1000
 
 root = tkinter.Tk()
 
 root.title('테스트 콘솔')
-image_hole = ImageTk.PhotoImage(Image.open(current_path+"/python-gui-coding/white_button3.png"))
-image_black = ImageTk.PhotoImage(Image.open(current_path+"/python-gui-coding/black_button.png"))
+image_hole = ImageTk.PhotoImage(Image.open(current_path+"/white_button3.png"))
+image_black = ImageTk.PhotoImage(Image.open(current_path+"/black_button.png"))
 
-# x, y 값 가져오기
+# 서버, 클라이언트 통신 펑션
+def new_game(client_socket):
+    client_socket.send('succes'.encode())
+    while True:
+        pass
 def play_sound(sound_path):
     playsound(sound_path)
 
@@ -61,7 +70,8 @@ class Button:
     def click(self):
         global score
         global my_string_var
-        play = threading.Thread(target=play_sound, args=('python-gui-coding/click_sound.mp3',))
+        play = threading.Thread(target=play_sound, args=('click_sound.mp3',))
+        play.daemon = True
         play.start()
         if self.image == image_black:
             self.image = image_hole
@@ -82,23 +92,11 @@ for i in range(5):
         button_click[(j,i)] = tkinter.Button(root, image=image_hole, command=button[(j,i)].click)
         button_click[(j,i)].grid(row=i, column=j)
 
-test = 0
-old_ran_coordx = 0
-old_ran_coordy = 0
-while True:
-    root.update()
-    try:
-        ran_coordx = random.randint(0,start_array_size)
-        ran_coordy = random.randint(0,start_array_size)
-        button[(ran_coordx,ran_coordy)].set_image(image_black)
-        button_click[(ran_coordx,ran_coordy)].config(image = image_black)
-    except:
-        pass
-    test += 1
-    if test%3000 == 0:
-        start_array_size -= 3
+new_thread = threading.Thread(target=new_game, args=(client_socket,))
+new_thread.start()
 
-# root.mainloop()
+
+root.mainloop()
 
 
 
