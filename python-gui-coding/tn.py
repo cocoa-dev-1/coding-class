@@ -8,6 +8,7 @@ import random
 import time
 import socket
 from playsound import playsound
+import pickle
 
 #1. 랜덤한 위치에 일정시간동안 두더지가 올라온다.
 #2. 두더지를 클릭하면 점수 상승
@@ -46,7 +47,26 @@ image_black = ImageTk.PhotoImage(Image.open(current_path+"/black_button.png"))
 def new_game(client_socket):
     client_socket.send('succes'.encode())
     while True:
-        pass
+        try:
+            data = client_socket.recv(1024)
+            if not data:
+                print('Disconnected')
+                break
+            try:
+                return_data = data.decode()
+                print(return_data)
+                if return_data.split(':')[0] == 'rand_coords':
+                    if button[(int(return_data.split(':')[1][0]),int(return_data.split(':')[1][1]))].get_image() == image_hole:
+                        button[(int(return_data.split(':')[1][0]),int(return_data.split(':')[1][1]))].set_image(image_black)
+                elif return_data.split(':')[0] == 'other_user':
+                    button[(int(return_data.split(':')[1][0]),int(return_data.split(':')[1][1]))].set_image(image_hole)
+            except:
+                print(pickle.loads(data))
+        except ConnectionResetError as e:
+            print('Disconnected')
+            break
+    client_socket.close()
+
 def play_sound(sound_path):
     playsound(sound_path)
 
@@ -63,6 +83,10 @@ class Button:
     
     def set_image(self, image):
         self.image = image
+        button_click[(self.coord_x,self.coord_y)].config(image=image)
+    
+    def get_image(self):
+        return self.image
     
     def get_coords(self):
         return (self.coord_x, self.coord_y)
@@ -74,15 +98,40 @@ class Button:
         play.daemon = True
         play.start()
         if self.image == image_black:
+            client_socket.send(('user_clicked:'+str(self.coord_x)+str(self.coord_y)).encode())
             self.image = image_hole
             score += 1
             my_string_var.set("내 점수: {0}점".format(score))
             button_click[(self.coord_x, self.coord_y)].config(image=image_hole)
 
+class CreateLabel:
+    
+    def __init__(self, window, text, width, height, relief, row, col, colspan):
+        self.window = window
+        self.text = tkinter.StringVar().set(text)
+        self.width = width
+        self.height = height
+        self.relief = relief
+        self.row = row
+        self.col = col
+        self.colspan = colspan
+        self.label = tkinter.Label(
+            self.window, 
+            textvariable=self.text, 
+            width=self.width, 
+            height=self.height, 
+            relief = self.relief
+        ).grid(
+            row = self.row, 
+            column = self.col, 
+            columnspan=self.colspan
+        )
+
 my_string_var = tkinter.StringVar()
 my_string_var.set("내 점수: 0점")
-my_label = tkinter.Label(root, text="게임이 시작되었습니다.", width=50, height=5, relief="solid").grid(row=0,column=5, columnspan=2)
-my_score = tkinter.Label(root, textvariable = my_string_var, width=50, height=5, relief="solid").grid(row=1,column=5, columnspan=2)
+my_label = tkinter.Label(root, text="게임이 시작되었습니다.", width=30, height=5, relief="solid").grid(row=0,column=5, columnspan=2)
+my_score = tkinter.Label(root, textvariable = my_string_var, width=30, height=5, relief="solid").grid(row=1,column=5, columnspan=2)
+
 
 
 for i in range(5):
