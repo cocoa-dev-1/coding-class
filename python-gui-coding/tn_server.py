@@ -30,13 +30,14 @@ def client_thread(client_socket, addr):
     global client_dic
     global client_point
     print('Connected addr: {0}:{1}'.format(addr[0],addr[1]))
+    client_socket.send((f'user_token:{addr[1]}:').encode())
     k_index = list(client_dic).index(addr[1])
     print(k_index)
     while True:
         try:
             data = client_socket.recv(1024)
             if not data: 
-                print('Disconnected by ' + addr[0],':',addr[1])
+                print('Disconnected by ' + addr[0]+':'+addr[1])
                 break
             recive_data = data.decode()
             if recive_data.split(':')[0] == 'user_clicked':
@@ -45,7 +46,7 @@ def client_thread(client_socket, addr):
                 player_point = client_point[f'player_{k_index+1}']
                 for k, v in client_dic.items():
                     if k != addr[1]:
-                        v.send((f'other_user:{recive_data.split(":")[1]}:player_{k_index+1}:{player_point}').encode())
+                        v.send((f'other_user:{recive_data.split(":")[1]}:player_{k_index+1}:{player_point}:').encode())
 
         except ConnectionResetError as e:
             print('Disconnected by ' + addr[0],':',addr[1])
@@ -73,7 +74,7 @@ def start_game():
                     if ran_coordx <= 4 and ran_coordy <= 4:
                         print(ran_coordx, ran_coordy)
                         for i in client_dic.values():
-                            i.send(('rand_coords:'+str(ran_coordx)+str(ran_coordy)).encode())
+                            i.send(('rand_coords:'+str(ran_coordx)+str(ran_coordy)+':').encode())
                 except Exception as e:
                     print('에러코드 발생:\n', e)
             minus_time = datetime.now()
@@ -98,17 +99,24 @@ while True:
         new_thread.daemon = True
         new_thread.start()
         player_index = list(client_dic).index(addr[1])
-        for k, v in client_dic.items():
-            if addr[1] != k:
-                k_index = list(client_dic).index(addr[1])
-                v.send(f'create_user_label:player_{k_index+1}'.encode())
-            else:
-                for i, j in client_dic.items():
-                    if addr[1] != i:
-                        k_index = list(client_dic).index(i)
-                        v.send(f'create_user_label:player_{k_index+1}'.encode())
         client_point[f'player_{player_index+1}'] = 0
-        if client_users == 2:
+        # for k, v in client_dic.items():
+        #     if addr[1] != k:
+        #         k_index = list(client_dic).index(addr[1])
+        #         v.send(f'create_user_label:player_{k_index+1}:'.encode())
+        #     else:
+        #         for i, j in client_dic.items():
+        #             if addr[1] != i:
+        #                 k_index = list(client_dic).index(i)
+        #                 v.send(f'create_user_label:player_{k_index+1}:'.encode())
+        # client_point[f'player_{player_index+1}'] = 0
+        if client_users == 4:
+            for k, v in client_dic.items():
+                k_index = list(client_dic).index(k)
+                for i, j in client_dic.items():
+                    j.send(f'create_user_label:player_{k_index+1}:{k}:'.encode())
+                    time.sleep(0.1)
+            time.sleep(0.5)
             print(client_point)
             print('start')
             start_game_th = threading.Thread(target=start_game, args=())

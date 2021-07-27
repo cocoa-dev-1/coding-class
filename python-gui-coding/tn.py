@@ -110,6 +110,7 @@ def new_game(client_socket):
     global label_count
     global player
     client_socket.send('succes'.encode())
+    client_token = ''
     while True:
         try:
             data = client_socket.recv(1024)
@@ -121,7 +122,9 @@ def new_game(client_socket):
                 
                 return_data_split = list(return_data.split(':'))
                 print(return_data_split)
-                if return_data_split[0] == 'rand_coords':
+                if return_data_split[0] == 'user_token':
+                    client_token = return_data_split[1]
+                elif return_data_split[0] == 'rand_coords':
                     if button[(int(return_data_split[1][0]),int(return_data_split[1][1]))].get_image() == image_hole:
                         button[(int(return_data_split[1][0]),int(return_data_split[1][1]))].set_image(image_black)
                 elif return_data_split[0] == 'other_user':
@@ -129,9 +132,10 @@ def new_game(client_socket):
                     button[(int(return_data_split[1][0]),int(return_data_split[1][1]))].set_image(image_hole)
                     player[return_data_split[2]].set_text(f'{return_data_split[2]} 점수: {return_data_split[3]}점')
                 elif return_data_split[0] == 'create_user_label':
-                    label_count += 1
-                    player[return_data_split[1]] = CreateLabel(root, text=f"{return_data_split[1]} 점수: 0점", width=30, height=5, relief="solid", row=label_count-1, col=5, colspan=2)
-                    root.update()
+                    if return_data_split[2] != client_token:
+                        label_count += 1
+                        player[return_data_split[1]] = CreateLabel(root, text=f"{return_data_split[1]} 점수: 0점", width=30, height=5, relief="solid", row=label_count-1, col=5, colspan=2)
+                        root.update()
                 elif return_data_split[0] == 'update_user_point':
                     pass
             except:
