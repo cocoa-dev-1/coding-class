@@ -48,14 +48,14 @@ class Square(Polygon):
     def get_area(self):
         return self.findArea()
 
-    def __str__(self):
-        a, b, c, d = self.sides
-        area = a * b
-        if self.sides[0] != 0:
-            sides_list = ['side '+str(i+1)+': '+str(self.sides[i])+'' for i in range(self.n)]
-            return f"length of all sides: {' '.join(sides_list)}\nlength of circumference: {sum(self.sides)}\narea: {area}"
-        else:
-            return 'the side is empty'
+    # def __str__(self):
+    #     a, b, c, d = self.sides
+    #     area = a * b
+    #     if self.sides[0] != 0:
+    #         sides_list = ['side '+str(i+1)+': '+str(self.sides[i])+'' for i in range(self.n)]
+    #         return f"length of all sides: {' '.join(sides_list)}\nlength of circumference: {sum(self.sides)}\narea: {area}"
+    #     else:
+    #         return 'the side is empty'
     
     def findArea(self):
         a, b, c, d = self.sides
@@ -76,15 +76,15 @@ class Rhombus(Polygon):
         area = (diagonal * diagonal2) / 2
         print('The area of the triangle is %0.2f' %area)
     
-    def __str__(self):
-        a, b, c, d = self.sides
-        diagonal, diagonal2 = self.hight
-        area = (diagonal * diagonal2) / 2
-        if self.sides[0] != 0:
-            sides_list = ['side '+str(i+1)+': '+str(self.sides[i])+'' for i in range(self.n)]
-            return f"length of all sides: {' '.join(sides_list)}\nlength of circumference: {sum(self.sides)}\narea: {area}"
-        else:
-            return 'the side is empty'
+    # def __str__(self):
+    #     a, b, c, d = self.sides
+    #     diagonal, diagonal2 = self.hight
+    #     area = (diagonal * diagonal2) / 2
+    #     if self.sides[0] != 0:
+    #         sides_list = ['side '+str(i+1)+': '+str(self.sides[i])+'' for i in range(self.n)]
+    #         return f"length of all sides: {' '.join(sides_list)}\nlength of circumference: {sum(self.sides)}\narea: {area}"
+    #     else:
+    #         return 'the side is empty'
 
 t = Triangle()
 t.inputSides()
