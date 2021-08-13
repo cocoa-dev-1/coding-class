@@ -19,9 +19,9 @@ class Customer(ABC):
         return self.point
     
     def upgrade(self):
-        if self.payment >= 10000.0:
+        if self.payment >= 10000.0 and not self.grade == 'vip':
             self.grade = 'vip'
-        elif self.payment >= 5000.0:
+        elif self.payment >= 5000.0 and not self.grade == 'gold':
             self.grade = 'gold'
         else:
             self.grade = 'silver'
@@ -42,13 +42,14 @@ class VipCustomer(Customer):
         self.payment += vip_payment
         self.point += (payment*self.saving)
         self.benefit()
+        super().upgrade()
         return vip_payment
         
     def benefit(self):
-        if self.payment > 15000.0 and self.vipsale:
+        if self.payment >= 15000.0 and self.vipsale:
             self.point += (self.payment*0.15)
             self.vipsale = False
-        if self.payment > 20000.0:
+        if self.payment >= 20000.0:
             self.sale = 0.7
 
 class GoldCustomer(Customer):
@@ -64,10 +65,11 @@ class GoldCustomer(Customer):
         self.payment += gold_payment
         self.point += (payment*self.saving)
         self.benefit()
+        super().upgrade()
         return gold_payment
         
     def benefit(self):
-        if self.payment > 7000.0 and self.goldsale:
+        if self.payment >= 7000.0 and self.goldsale:
             self.point += (self.payment*0.10)
             self.goldsale = False
 
@@ -84,9 +86,10 @@ class SilverCustomer(Customer):
         self.payment += silver_payment
         self.point += (payment*self.saving)
         self.benefit()
+        super().upgrade()
         return silver_payment
         
     def benefit(self):
-        if self.payment > 2500.0 and self.silversale:
+        if self.payment >= 2500.0 and self.silversale:
             self.point += 100.0
             self.silversale = False
