@@ -1,4 +1,6 @@
-class Polygon:
+from abc import *
+
+class Polygon(ABC):
     def __init__(self, no_of_sides):
         self.n = no_of_sides
         self.sides = [0 for i in range(no_of_sides)]
@@ -6,7 +8,7 @@ class Polygon:
     def __str__(self):
         if self.sides[0] != 0:
             sides_list = ['side '+str(i+1)+': '+self.sides[i]+'' for i in range(self.n)]
-            return f"length of all sides:{''.join(sides_list)}\nlength of circumference:{sum(self.sides)}\n"
+            return f"length of all sides:{''.join(sides_list)}\nlength of circumference:{self.get_circumference()}\narea: {self.get_area()}"
         else:
             return 'the side is empty'
     
@@ -16,22 +18,21 @@ class Polygon:
     def dispSides(self):
         for i in range(self.n):
             print("Side",i+1,"is",self.sides[i])
+
+    @abstractmethod
+    def get_area(self):
+        pass
+
+    def get_circumference(self):
+        return sum(self.sides)
     
 
 class Triangle(Polygon):
     def __init__(self):
         Polygon.__init__(self, 3)
-    
-    def __str__(self):
-        a, b, c = self.sides
-        # calculate the semi-perimeter
-        s = (a + b + c) / 2
-        area = (s* (s-a) * (s-b) * (s-c)) ** 0.5
-        if self.sides[0] != 0:
-            sides_list = ['side '+str(i+1)+': '+str(self.sides[i])+'' for i in range(self.n)]
-            return f"length of all sides: {' '.join(sides_list)}\nlength of circumference: {sum(self.sides)}\narea: {area}"
-        else:
-            return 'the side is empty'
+
+    def get_area(self):
+        return self.findArea()
     
     def findArea(self):
         a, b, c = self.sides
@@ -43,6 +44,9 @@ class Triangle(Polygon):
 class Square(Polygon):
     def __init__(self):
         Polygon.__init__(self, 4)
+    
+    def get_area(self):
+        return self.findArea()
 
     def __str__(self):
         a, b, c, d = self.sides
