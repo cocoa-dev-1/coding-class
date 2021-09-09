@@ -81,7 +81,8 @@ class Bank(Banking, Loan):
 class LoanAccount(Account, Bank):
     def __init__(self, owner):
         Account.__init__(self)
-        owner.add_account(Account)
+        Bank.__init__(self)
+        self._owner = owner
 
     def deposit(self, amount):
         self._balance += amount
@@ -95,4 +96,12 @@ class LoanAccount(Account, Bank):
         self._balance -= amount
 
     def __str__(self):
-        pass
+        return f"{self._owner}\n{super().__str__()}\ntotal debt : {self.debt}({self.month} month)"
+
+
+if __name__ == '__main__':
+    c = Customer('cocoa', 17, 'male', 10000)
+    L1 = LoanAccount(c)
+    L1.loan(5000, 12)
+    L1.deposit(1000)
+    print(L1)
